@@ -1,0 +1,49 @@
+FROM ubuntu:20.04
+
+##============================================================
+## Entry
+##============================================================
+
+EXPOSE 10240
+WORKDIR /compiler-explorer
+ENTRYPOINT [ "make" ]
+CMD ["run"]
+
+
+##============================================================
+## Installation
+##============================================================
+
+RUN echo "*** Installing Prerequisites ***" \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update \
+    && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get update \
+    && apt-get install -y \
+        git \
+        python3 \
+        python3-pip \
+        wget \
+        ca-certificates \
+        nodejs \
+        cmake \
+        make \
+        libelf1 \
+        libelf++0 \
+    && apt-get autoremove --purge -y \
+    && apt-get autoclean -y \
+    && rm -rf /var/cache/apt/* /tmp/*
+
+ARG commit=main
+RUN echo "*** Installing Compiler Explorer ***" \
+    && git clone https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer \
+    && git -C /compiler-explorer reset --hard $commit \
+    && mkdir -p /opt/compiler-explorer/config \
+    && rm -rf /compiler-explorer/etc/config \
+    && ln -s /opt/compiler-explorer/config /compiler-explorer/etc/config
+
+RUN echo "*** Installing Dependencies ***" \
+    && cd /compiler-explorer \
+    && npm install @sentry/node \
+    npm run webpack
