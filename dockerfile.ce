@@ -36,7 +36,7 @@ RUN echo "*** Installing Prerequisites ***" \
     && rm -rf /var/cache/apt/* /tmp/*
 
 ARG commit=main
-RUN echo "*** Installing Compiler Explorer ***" \
+RUN echo "*** Installing Compiler Explorer $commit ***" \
     && git clone https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer \
     && git -C /compiler-explorer reset --hard $commit \
     && mkdir -p /opt/compiler-explorer/config \

@@ -11,7 +11,15 @@ if [ ! -z $1 ]; then
     ce_commit=$1
 fi
 
-echo "Building compiler-explorer:$ce_commit"
-docker build -f dockerfile.ce -t compiler-explorer:$ce_commit --build-arg commit=$ce_commit .
-docker tag compiler-explorer:$ce_commit compiler-explorer:latest
-echo "Successfully tagged compiler-explorer:$ce_commit"
+git -C compiler-explorer/ fetch
+if ! ce_commit_hash=$(git -C compiler-explorer/ log -1 --format="%H" $ce_commit); then
+    exit -1
+fi
+
+docker_repo=compiler-explorer
+docker_tag=$ce_commit
+
+echo "Building $docker_repo:$docker_tag #$ce_commit_hash"
+docker build -f dockerfile.ce -t $docker_repo:$docker_tag --build-arg commit=$ce_commit_hash .
+docker tag $docker_repo:$docker_tag $docker_repo:latest
+echo "Successfully tagged compiler-explorer:$ce_commit #$ce_commit_hash"
