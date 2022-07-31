@@ -1,0 +1,6 @@
+[submodule "compiler-explorer"]
+	path = compiler-explorer
+	url = https://github.com/compiler-explorer/compiler-explorer.git
+[submodule "compiler-explorer-infra"]
+	path = compiler-explorer-infra
+	url = https://github.com/compiler-explorer/infra.git
