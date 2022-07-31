@@ -1,0 +1,38 @@
+FROM ubuntu:20.04
+
+##============================================================
+## Entry
+##============================================================
+
+WORKDIR /compiler-explorer-infra
+
+
+##============================================================
+## Installation
+##============================================================
+
+RUN echo "*** Installing Prerequisites ***" \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update \
+    && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get update \
+    && apt-get install -y \
+        git \
+        python3 \
+        python3-pip \
+        python3-venv \
+        curl \
+        wget \
+        binutils \
+        build-essential \
+    && apt-get autoremove --purge -y \
+    && apt-get autoclean -y \
+    && rm -rf /var/cache/apt/* /tmp/*
+
+RUN echo "*** Installing Compiler Explorer Infra ***" \
+    && git clone https://github.com/compiler-explorer/infra.git /compiler-explorer-infra
+
+RUN echo "*** Installing Dependencies ***" \
+    && cd /compiler-explorer-infra \
+    && make ce

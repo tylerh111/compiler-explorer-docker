@@ -51,22 +51,32 @@ Everything (besides the website) can be installed in `/opt/compiler-explorer`.
 A volume can be created with all the compilers, libraries, tools, and their configuration.
 Then it can be mounted at `/opt/compiler-explorer`.
 
-First create the volume.
-This will create a volume called `compiler-explorer`.
-```
-$ docker volume create compiler-explorer
-```
-
-Then, run a docker container and mount both this repository and the `compiler-explorer` volume.
-```
-$ docker run -it --rm -v compiler-explorer:/opt/compiler-explorer ubuntu:20.04 /bin/bash
+The Compiler Explorer Infra image comes with infra that can be used to install the compilers and libraries.
+Use the following to build the compiler explorer infra image.
+```bash
+$ ./build_ce_infra.sh
+# or
+$ docker build -f dockerfile.ce_infra -t compiler-explorer-infra .
 ```
 
-Finally, install compilers and libraries.
-All compilers and libraries should be installed somewhere in `/opt/compiler-explorer`.
-Manually installing compilers and libraries is simplest.
+A volume needs to be created and mounted on to the infra image.
+Use the following to create the volume and run the infra image.
+```bash
+$ ./run_ce_infra.sh [volume]
+# or
+$ docker volume create <volume>
+$ docker run -it --rm -v `pwd`:/workspace -v <volume>:/opt/compiler-explorer compiler-explorer-infra
+```
+
+From within the infra container, use `./bin/ce_install` to show available compilers and libraries and to install them.
+The following will list the available installables and then will install them.
+```bash
+$ ./bin/ce_install --filter-match-any list "gcc 12.1.0" "clang 14.0.0" "fmt 8.1.1" "boost 1.79.0" "nlohmann_json 3.6.0"
+$ ./bin/ce_install --filter-match-any install "gcc 12.1.0" "clang 14.0.0" "fmt 8.1.1" "boost 1.79.0" "nlohmann_json 3.6.0"
+```
 
 Remember to add the config files under `/opt/compiler-explorer/config`.
+The present working directory was mounted at `/workspace`, use this to transfer config files into `/opt/compiler-explorer/config`.
 Use the files in `config` or `compiler-explorer/etc/config` directory as an example.
 
 
