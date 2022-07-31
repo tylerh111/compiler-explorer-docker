@@ -1,16 +1,6 @@
 FROM ubuntu:20.04
 
 ##============================================================
-## Entry
-##============================================================
-
-EXPOSE 10240
-WORKDIR /compiler-explorer
-ENTRYPOINT [ "make" ]
-CMD ["run"]
-
-
-##============================================================
 ## Installation
 ##============================================================
 
@@ -47,3 +37,26 @@ RUN echo "*** Installing Dependencies ***" \
     && cd /compiler-explorer \
     && npm install @sentry/node \
     npm run webpack
+
+
+##============================================================
+## Entry
+##============================================================
+
+EXPOSE 10240
+WORKDIR /compiler-explorer
+ENTRYPOINT [ "make" ]
+CMD ["run"]
+
+
+##============================================================
+## Labeling
+##============================================================
+
+LABEL org.opencontainers.image.title="Compiler Explorer" \
+      org.opencontainers.image.description="Docker image of Compiler Explorer" \
+      org.opencontainers.image.authors="Tyler Hughes <tylerh.code@gmail.com>" \
+      org.opencontainers.image.license="GPL-3.0" \
+      org.opencontainers.image.source="https://github.com/tylerh111/compiler-explorer-docker" \
+      org.opencontainers.image.version="1.0.0" \
+      org.opencontainers.image.revision="$commit"
